@@ -1,0 +1,10 @@
+{
+	"testIODriver": {
+		"token": "xyz",
+		"option1": "bar",
+		"option2": "baz"
+	},
+	"fooDriver": {
+		"access_key": "zyx"
+	}
+}
