@@ -22,12 +22,6 @@ global.AI_NAME_REGEX = /(otto|8:00)/;
 });
 
 global._ = require('underscore');
-global.path = require('path');
-global.fs = require('fs');
-global.request = require('request');
-global.async = require('async');
-global.moment = require('moment');
-moment.locale(public_config.language);
 
 global.APIAI = require('./apiai');
 

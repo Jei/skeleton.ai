@@ -17,5 +17,8 @@
   },
   "homepage": "",
   "dependencies": {
+    "apiai": "^4.0.1",
+    "node-telegram-bot-api": "^0.27.0",
+    "underscore": "^1.8.3"
   }
 }
