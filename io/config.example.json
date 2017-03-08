@@ -1,4 +1,17 @@
 {
+	"telegram": {
+		"token": "xyz",
+		"whitelist": [],
+		"blacklist": [],
+		"webhook": {
+			"url": ""
+		},
+		"options": {
+			"webHook": {
+				"port": ""
+			}
+		}
+	},
 	"testIODriver": {
 		"token": "xyz",
 		"option1": "bar",
