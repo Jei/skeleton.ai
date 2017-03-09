@@ -79,8 +79,6 @@ require('./boot');
 // 	});
 // };
 
-let IOs = {};
-
 function onIoResponse(err, data, para) {
 	let io = this;
 	para = para || {};
@@ -124,8 +122,11 @@ function onIoResponse(err, data, para) {
 }
 
 config.ioDrivers.forEach((driver_name) => {
-	let driver = require(__basedir + '/io/' + driver_name);
-	driver.startInput();
-	driver.onInput( onIoResponse.bind(io) );
-	IOs[driver_name] = driver;
+	IOs[driver_name] = require(__basedir + '/io/' + driver_name);
+	IOs[driver_name].startInput();
+	// driver.onInput( onIoResponse.bind(io) );
+});
+
+config.handlers.forEach((handler_name) => {
+	Handlers[handler_name] = require(__basedir + '/handlers/' + handler_name);
 });
