@@ -1,5 +1,6 @@
 class IODriver extends require('events') {
 	constructor() {
+		super();
 		if (this.constructor === IODriver) {
 			throw new TypeError('Can not construct abstract class.');
 		}

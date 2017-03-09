@@ -4,6 +4,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 class Telegram extends require('./iodriver') {
 	constructor() {
+		super();
 		this.bot = new TelegramBot(_config.token, _config.options);
 
 		if (_config.webhook) {
