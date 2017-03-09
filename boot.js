@@ -29,4 +29,4 @@ global._ = require('underscore');
 // global.Memory = require('./memory');
 
 global.IOs = {};
-global.Handlers = {};
+global.Behaviors = {};

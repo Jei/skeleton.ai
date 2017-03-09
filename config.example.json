@@ -1,5 +1,6 @@
 {
 	"actions": ["testAction"],
+	"behaviors": [""],
 	"ioDrivers": ["testIODriver"],
 	"apiai_token": "abc"
 }

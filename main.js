@@ -127,6 +127,6 @@ config.ioDrivers.forEach((driver_name) => {
 	// driver.onInput( onIoResponse.bind(io) );
 });
 
-config.handlers.forEach((handler_name) => {
-	Handlers[handler_name] = require(__basedir + '/handlers/' + handler_name);
+config.behaviors.forEach((behavior_name) => {
+	Behaviors[behavior_name] = require(__basedir + '/behaviors/' + behavior_name);
 });
