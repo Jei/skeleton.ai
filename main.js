@@ -122,7 +122,8 @@ function onIoResponse(err, data, para) {
 }
 
 config.ioDrivers.forEach((driver_name) => {
-	IOs[driver_name] = require(__basedir + '/io/' + driver_name);
+	let Driver = require(__basedir + '/io/' + driver_name);
+	IOs[driver_name] = new Driver();
 });
 
 config.behaviors.forEach((behavior_name) => {
