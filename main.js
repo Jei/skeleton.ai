@@ -123,8 +123,6 @@ function onIoResponse(err, data, para) {
 
 config.ioDrivers.forEach((driver_name) => {
 	IOs[driver_name] = require(__basedir + '/io/' + driver_name);
-	IOs[driver_name].startInput();
-	// driver.onInput( onIoResponse.bind(io) );
 });
 
 config.behaviors.forEach((behavior_name) => {
