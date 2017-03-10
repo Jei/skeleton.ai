@@ -18,6 +18,7 @@
   "homepage": "",
   "dependencies": {
     "apiai": "^4.0.1",
+    "irc": "^0.5.2",
     "node-telegram-bot-api": "^0.27.0",
     "underscore": "^1.8.3"
   }
