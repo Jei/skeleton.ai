@@ -28,7 +28,7 @@ class IRC extends require('./iodriver') {
 		});
 	}
 
-	output(data, e) {
+	output(target, e, opts) {
 		return new Promise((resolve, reject) => {
 			console.io(TAG, e);
 			if (_.isString(e)) e = { text: e };
@@ -36,13 +36,13 @@ class IRC extends require('./iodriver') {
 			if (e.error) return resolve();
 
 			if (e.text) {
-				this.bot.say(data.target, e.text);
+				this.bot.say(target, e.text);
 				return resolve();
 			}
 
 			if (e.spotify) {
 				if (e.spotify.song) {
-					this.bot.say(data.target, e.spotify.song.external_urls.spotify);
+					this.bot.say(target, e.spotify.song.external_urls.spotify);
 					return resolve();
 				}
 				return reject();

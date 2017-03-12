@@ -17,9 +17,7 @@ if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
 			from = e.from.first_name + (e.from.last_name != null ? ' ' + e.from.last_name : '');
 		}
 
-		IOs.irc.output({
-			target: relay_config.ircChannel
-		}, from + ': ' + e.text);
+		IOs.irc.output(relay_config.ircChannel, 'Telegram.' + from + ': ' + e.text);
 	});
 
 	IOs.irc.on('message', (from, to, message) => {
@@ -27,8 +25,8 @@ if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
 
 		if (from == irc_config.nick || to != relay_config.ircChannel) return;
 
-		IOs.telegram.output({
-			chatId: relay_config.telegramChatId
-		}, from + ': ' + message);
+		IOs.telegram.output(relay_config.telegramChatId, '*' + from + ':* ' + message, {
+			parse_mode: 'Markdown'
+		});
 	});	
 }

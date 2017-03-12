@@ -20,31 +20,31 @@ class Telegram extends require('./iodriver') {
 		});
 	}
 
-	output(data, e) {
+	output(chatId, e, opts) {
 		return new Promise((resolve, reject) => {
-			console.io(TAG, e);
+			console.io(TAG, chatId, e);
 			if (_.isString(e)) e = { text: e };
 
 			if (e.error) return resolve();
 
 			if (e.text) {
-				this.bot.sendChatAction(data.chatId, 'typing');
-				this.bot.sendMessage(data.chatId, e.text);
+				this.bot.sendChatAction(chatId, 'typing');
+				this.bot.sendMessage(chatId, e.text, opts);
 				return resolve();
 			}
 
 			if (e.spotify) {
-				this.bot.sendChatAction(data.chatId, 'typing');
+				this.bot.sendChatAction(chatId, 'typing');
 				if (e.spotify.song) {
-					this.bot.sendMessage(data.chatId, e.spotify.song.external_urls.spotify);
+					this.bot.sendMessage(chatId, e.spotify.song.external_urls.spotify, opts);
 					return resolve();
 				}
 				return reject();
 			}
 
 			if (e.photo) {
-				this.bot.sendChatAction(data.chatId, 'upload_photo');
-				this.bot.sendPhoto(data.chatId, e.photo);
+				this.bot.sendChatAction(chatId, 'upload_photo');
+				this.bot.sendPhoto(chatId, e.photo, opts);
 				return resolve();
 			}
 
