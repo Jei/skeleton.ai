@@ -11,6 +11,7 @@ global.public_config = require('./public_config.json');
 [ 'info',   '\x1b[2m' ],
 [ 'debug',   '\x1b[30m' ],
 // Custom methods
+[ 'io',   '\x1b[33m' ],
 [ 'user',   '\x1b[35m' ],
 [ 'ai',   '\x1b[35m' ],
 ].forEach(function(pair) {

@@ -22,7 +22,7 @@ class Telegram extends require('./iodriver') {
 
 	output(data, e) {
 		return new Promise((resolve, reject) => {
-			console.ai(TAG, e);
+			console.io(TAG, e);
 			if (_.isString(e)) e = { text: e };
 
 			if (e.error) return resolve();
