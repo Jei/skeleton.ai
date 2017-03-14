@@ -25,8 +25,6 @@ if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
 
 		if (from == irc_config.nick || to != relay_config.ircChannel) return;
 
-		IOs.telegram.output(relay_config.telegramChatId, '*' + from + ':* ' + message, {
-			parse_mode: 'Markdown'
-		});
+		IOs.telegram.output(relay_config.telegramChatId, 'IRC.' + from + ': ' + message);
 	});	
 }
