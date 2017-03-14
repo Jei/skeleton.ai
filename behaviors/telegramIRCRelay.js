@@ -6,7 +6,7 @@ if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
 	const relay_config = _config.telegramIRCRelay;
 
 	IOs.telegram.on('message', (e) => {
-		console.ai('Message from Telegram', e);
+		console.info('Message from Telegram', e);
 
 		// TODO support different types of messages
 		if (e.chat.id != relay_config.telegramChatId || e.text == null) return;
@@ -21,7 +21,7 @@ if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
 	});
 
 	IOs.irc.on('message', (from, to, message) => {
-		console.ai('Message from IRC:', from + ' => ' + to + ' : ' + message);
+		console.info('Message from IRC:', from + ' => ' + to + ' : ' + message);
 
 		if (from == irc_config.nick || to != relay_config.ircChannel) return;
 

@@ -3,8 +3,6 @@ global.__basedir = __dirname;
 global.config = require('./config.json');
 global.public_config = require('./public_config.json');
 
-// global.AI_NAME_REGEX = /(otto|8:00)/;
-
 [
 [ 'warn',  '\x1b[35m' ],
 [ 'error', '\x1b[31m' ],
@@ -24,10 +22,7 @@ global.public_config = require('./public_config.json');
 
 global._ = require('underscore');
 
-// global.APIAI = require('./apiai');
-
-// global.DB = require('mysql').createConnection(config.mysql);
-// global.Memory = require('./memory');
-
+global.AIs = {};
 global.IOs = {};
 global.Behaviors = {};
+global.Actions = {};
