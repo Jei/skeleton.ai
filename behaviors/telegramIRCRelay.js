@@ -1,15 +1,13 @@
-const telegram_config = require('../io/config.json').telegram || {};
-const irc_config = require('../io/config.json').irc || {};
-const _config = require('./config.json') || {};
+const telegram_config = config.ioDrivers.telegram || {};
+const irc_config = config.ioDrivers.irc || {};
+const _config = config.behaviors.telegramIRCRelay || {};
 
-if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
-	const relay_config = _config.telegramIRCRelay;
-
+if (IOs.telegram && IOs.irc && _config) {
 	IOs.telegram.on('message', (e) => {
 		console.ai('Message from Telegram', e);
 
 		// TODO support different types of messages
-		if (e.chat.id != relay_config.telegramChatId || e.text == null) return;
+		if (e.chat.id != _config.telegramChatId || e.text == null) return;
 
 		let from = e.from.username;
 
@@ -17,14 +15,14 @@ if (IOs.telegram && IOs.irc && _config.telegramIRCRelay) {
 			from = e.from.first_name + (e.from.last_name != null ? ' ' + e.from.last_name : '');
 		}
 
-		IOs.irc.output(relay_config.ircChannel, 'Telegram.' + from + ': ' + e.text);
+		IOs.irc.output(_config.ircChannel, 'Telegram.' + from + ': ' + e.text);
 	});
 
 	IOs.irc.on('message', (from, to, message) => {
 		console.ai('Message from IRC:', from + ' => ' + to + ' : ' + message);
 
-		if (from == irc_config.nick || to != relay_config.ircChannel) return;
+		if (from == irc_config.nick || to != _config.ircChannel) return;
 
-		IOs.telegram.output(relay_config.telegramChatId, 'IRC.' + from + ': ' + message);
+		IOs.telegram.output(_config.telegramChatId, 'IRC.' + from + ': ' + message);
 	});	
 }

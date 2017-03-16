@@ -1,11 +1,10 @@
 const TAG = 'IO.IRC';
-const _config = require('./config.json').irc || {};
 const IRCBot = require('irc');
 
 class IRC extends require('./iodriver') {
-	constructor() {
+	constructor(cfg) {
 		super();
-		this.bot = new IRCBot.Client(_config.serverUrl, _config.nick, _config.options);
+		this.bot = new IRCBot.Client(cfg.serverUrl, cfg.nick, cfg.options);
 
 		this.bot.addListener('message', (from, to, message) => {
 			this.emit('message', from, to, message);

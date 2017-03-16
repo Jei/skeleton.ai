@@ -1,15 +1,14 @@
 const TAG = 'IO.Telegram';
-const _config = require('./config.json').telegram || {};
 const TelegramBot = require('node-telegram-bot-api');
 
 class Telegram extends require('./iodriver') {
-	constructor() {
+	constructor(cfg) {
 		super();
-		this.bot = new TelegramBot(_config.token, _config.options);
+		this.bot = new TelegramBot(cfg.token, cfg.options);
 
-		if (_config.webhook) {
-			var listenUrl = _config.webhook.url + _config.token;
-			this.bot.setWebHook(listenUrl, _config.webhook.options);
+		if (cfg.webhook) {
+			var listenUrl = cfg.webhook.url + cfg.token;
+			this.bot.setWebHook(listenUrl, cfg.webhook.options);
 			this.bot.getWebHookInfo().then((e) => {
 				console.info(TAG, 'started', e); 
 			});

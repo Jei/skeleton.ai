@@ -121,13 +121,14 @@ function onIoResponse(err, data, para) {
 	}
 }
 
-config.ioDrivers.forEach((driver_name) => {
+_.each(config.ioDrivers, (driver_name) => {
 	let Driver = require(__basedir + '/io/' + driver_name);
-	IOs[driver_name] = new Driver();
+	IOs[driver_name] = new Driver(config.ioDrivers[driver_name]);
 	console.info('Created IO driver "' + driver_name + '"');
 });
 
-config.behaviors.forEach((behavior_name) => {
+_.each(config.behaviors, (behavior_name) => {
+	// TODO refactor as classes?
 	Behaviors[behavior_name] = require(__basedir + '/behaviors/' + behavior_name);
 	console.info('Added behavior "' + behavior_name + '"');
 });
