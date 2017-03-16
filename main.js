@@ -1,8 +1,8 @@
 require('./boot');
 
-config.aiDrivers.forEach((driver_name) => {
+_.each(config.aiDrivers, (opts, driver_name) => {
 	let Driver = require(__basedir + '/ai/' + driver_name);
-	AIs[driver_name] = new Driver();
+	AIs[driver_name] = new Driver(opts);
 	console.info('Created AI driver "' + driver_name + '"');
 });
 

@@ -1,13 +1,15 @@
 const TAG = 'AI.APIAI';
-const _config = require('./config.json') || {};
-const apiaiClient = require('apiai')(_config.apiai.token, {
-	language: public_config.language
-});
 
 class APIAI {
-	constructor() {}
+	constructor(opts) {
+		this.bot = require('apiai')(opts.token, {
+			language: public_config.language
+		});
+	}
 
 	textRequest(data, text) {
+		var self = this;
+
 		return new Promise((resolve, reject) => {
 			text = text.replace(new RegExp('(' + public_config.aiAliases.join('|') + ')'), '');
 
@@ -15,7 +17,7 @@ class APIAI {
 				sessionId: Date.now()
 			});
 
-			let request = apiaiClient.textRequest(text, data);
+			let request = self.bot.textRequest(text, data);
 
 			request.on('response', function(response) {
 				let r = response.result;
