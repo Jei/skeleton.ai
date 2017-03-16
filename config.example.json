@@ -1,6 +1,29 @@
 {
-	"actions": ["testAction"],
-	"behaviors": [""],
-	"ioDrivers": ["testIODriver"],
-	"apiai_token": "abc"
+	"behaviors": {
+		"telegramIRCRelay": {
+			"ircChannel": "<IRC USER OR CHANNEL>",
+			"telegramChatId": "<TELEGRAM CHAT ID>"
+		}
+	},
+	"ioDrivers": {
+		"telegram": {
+			"token": "<TELEGRAM BOT TOKEN>",
+			"options": {
+				"polling": true
+			}
+		},
+		"irc": {
+			"serverUrl": "<IRC SERVER>",
+			"nick": "<IRC BOT NICKNAME>",
+			"options": {
+				"userName": "<IRC BOT USERNAME>",
+				"realName": "<IRC BOT REAL NAME>",
+				"port": <SERVER PORT>,
+				"autoRejoin": true,
+				"retryCount": 60,
+				"retryDelay": 60000,
+				"channels": ["<CHANNELS>","<TO>","<JOIN>"]
+			}
+		}
+	}
 }
