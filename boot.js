@@ -1,7 +1,6 @@
 global.__basedir = __dirname;
 
 global.config = require('./config.json');
-global.public_config = require('./public_config.json');
 
 [
 [ 'warn',  '\x1b[35m' ],

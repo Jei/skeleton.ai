@@ -1,4 +1,5 @@
 {
+	"language": "en",
 	"behaviors": {
 		"telegramIRCRelay": {
 			"ircChannel": "<IRC USER OR CHANNEL>",
