@@ -8,7 +8,9 @@ if (IOs.telegram && AIs.apiai && _config) {
 		// TODO support different types of messages
 		// TODO check whitelist/blacklist
 		if (e.text) {
-			AIs.apiai.textRequest(null, e.text)
+			AIs.apiai.textRequest({
+				sessionId: e.chat.id
+			}, e.text)
 			.then((result) => {
 				console.info(result);
 			})
