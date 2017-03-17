@@ -11,8 +11,6 @@ class APIAI {
 		var self = this;
 
 		return new Promise((resolve, reject) => {
-			text = text.replace(AI_NAME_REGEX, '');
-
 			let request = self.client.textRequest(text, data);
 			console.debug(TAG, 'textRequest', text);
 
