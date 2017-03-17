@@ -18,6 +18,7 @@
 			"options": {
 				"userName": "<IRC BOT USERNAME>",
 				"realName": "<IRC BOT REAL NAME>",
+				"secure": true,
 				"port": <SERVER PORT>,
 				"autoRejoin": true,
 				"retryCount": 60,
