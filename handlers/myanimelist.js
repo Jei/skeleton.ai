@@ -67,9 +67,9 @@ class MyAnimeList {
 	}
 
 	myList(result, data) {
-		return this.list(result, _.extend(data, {
-			u: this._config.defaultUser
-		}));
+		result.parameters.u = this._config.defaultUser;
+
+		return this.list(result, data);
 	}
 }
 
