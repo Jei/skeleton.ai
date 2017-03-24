@@ -2,7 +2,7 @@ const TAG = require('path').basename(__filename, '.js');
 const MALAPPINFO = 'https://myanimelist.net/malappinfo.php';
 
 // TODO create support module for localization
-const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../i18n/' + TAG + '.json') ? '../i18n/' + TAG + '.json' : '../i18n/default.json');
+const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../../i18n/' + TAG + '.json') ? '../../i18n/' + TAG + '.json' : '../../i18n/default.json');
 
 class MyAnimeList {
 	constructor(cfg) {
@@ -37,7 +37,7 @@ class MyAnimeList {
 						});
 					}
 
-					if (malresult.anime == null || malresult.manga == null) {
+					if (malresult.anime == null && malresult.manga == null) {
 						return resolve({
 							text: i18n.__("The user {{u}} has no {{type}} in his list yet.", query)
 						});
@@ -45,8 +45,8 @@ class MyAnimeList {
 
 					return resolve({
 						text: _.map(malresult[query.type || 'anime'], function(entry) {
-							return entry.series_title + '\n';
-						})
+							return entry.series_title;
+						}).join('\n')
 					});
 				});
 			});

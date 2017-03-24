@@ -3,8 +3,6 @@ const TAG = 'AI.APIAI';
 function performAction(action, result, data) {
 	let dot_pos = action.indexOf('.');
 
-	console.ai('performing', action, result, data);
-
 	if (dot_pos) {
 		let handler_name = action.slice(0, dot_pos);
 		let method = action.slice(dot_pos + 1).toLowerCase().replace(/\.(.)/g, function(match, group1) {
@@ -46,10 +44,10 @@ class APIAI {
 					.then(resolve)
 					.catch(reject);
 				}
-				
+
 				if (!_.isEmpty(fulfillment.speech)) {
-					return resolve({ 
-						text: fulfillment.speech 
+					return resolve({
+						text: fulfillment.speech
 					});
 				}
 
@@ -61,10 +59,10 @@ class APIAI {
 							replies: fulfillment.messages[0].replies
 						});
 					} else if (msg.imageUrl){
-						return resolve({ 
-							image: { 
-								remoteFile: msg.imageUrl 
-							} 
+						return resolve({
+							image: {
+								remoteFile: msg.imageUrl
+							}
 						});
 					}
 				}
