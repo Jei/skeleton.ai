@@ -18,7 +18,4 @@ _.each(config.behaviors, (opts, behavior_name) => {
 	console.info('Added behavior "' + behavior_name + '"');
 });
 
-config.actions.forEach((action_name) => {
-	Actions[action_name] = require(__basedir + '/actions/' + action_name);
-	console.info('Added action "' + action_name + '"');
-});
+Handlers = require(__basedir + '/handlers');

@@ -8,7 +8,7 @@ global.config = require('./config.json');
 [ 'info',   '\x1b[2m' ],
 [ 'debug',   '\x1b[30m' ],
 // Custom methods
-[ 'io',   '\x1b[33m' ],
+[ 'io',   '\x1b[35m' ],
 [ 'user',   '\x1b[35m' ],
 [ 'ai',   '\x1b[35m' ],
 ].forEach(function(pair) {
@@ -24,4 +24,4 @@ global._ = require('underscore');
 global.AIs = {};
 global.IOs = {};
 global.Behaviors = {};
-global.Actions = {};
+global.Handlers = {};
