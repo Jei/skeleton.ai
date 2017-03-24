@@ -59,7 +59,7 @@ class MyAnimeList {
 					}
 
 					return resolve({
-						text: filterResults(malresult[query.type || 'anime'], _.omit(query, MALAPPINFO_SUPPORTED_PARAMS))
+						text: formatResults(malresult[query.type || 'anime'], _.omit(query, MALAPPINFO_SUPPORTED_PARAMS))
 					});
 				});
 			});
