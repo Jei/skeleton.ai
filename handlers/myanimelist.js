@@ -1,8 +1,17 @@
 const TAG = require('path').basename(__filename, '.js');
+
+// MALAPPINFO constants
 const MALAPPINFO = 'https://myanimelist.net/malappinfo.php';
+const MALAPPINFO_SUPPORTED_PARAMS = ['u','type'];
 
 // TODO create support module for localization
 const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../../i18n/' + TAG + '.json') ? '../../i18n/' + TAG + '.json' : '../../i18n/default.json');
+
+function formatResults(list, filters) {
+	return _.map(_.where(list, filters), function(entry) {
+		return entry.series_title;
+	}).join('\n');
+}
 
 class MyAnimeList {
 	constructor(cfg) {
@@ -22,10 +31,16 @@ class MyAnimeList {
 	list(result, data) {
 		return new Promise((resolve, reject) => {
 			let query = _.extend({
-				u: this._config.defaultUser || ''
+				type: 'anime'
 			}, result.parameters);
 
-			this.malappinfo(query, (err, resp) => {
+			if (query.u == null) {
+				return resolve({
+					text: i18n.__("I don't have a username to search.")
+				});
+			}
+
+			this.malappinfo(_.pick(query, MALAPPINFO_SUPPORTED_PARAMS), (err, resp) => {
 				require('xml2js').parseString(resp, function(err, result) {
 					let malresult = result.myanimelist;
 
@@ -33,7 +48,7 @@ class MyAnimeList {
 
 					if (malresult.myinfo == null) {
 						return resolve({
-							text: i18n.__("Sorry, I couldn't find any data for the user {{u}}", query)
+							text: i18n.__("Sorry, I couldn't find any data for the user {{u}}.", query)
 						});
 					}
 
@@ -44,9 +59,7 @@ class MyAnimeList {
 					}
 
 					return resolve({
-						text: _.map(malresult[query.type || 'anime'], function(entry) {
-							return entry.series_title;
-						}).join('\n')
+						text: filterResults(malresult[query.type || 'anime'], _.omit(query, MALAPPINFO_SUPPORTED_PARAMS))
 					});
 				});
 			});
@@ -55,7 +68,7 @@ class MyAnimeList {
 
 	myList(result, data) {
 		return this.list(result, _.extend(data, {
-			u: this._config.defaultUser || ''
+			u: this._config.defaultUser
 		}));
 	}
 }
