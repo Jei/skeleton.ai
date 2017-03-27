@@ -28,7 +28,7 @@ class MyAnimeList {
 			let request = require('request');
 
 			request({
-				url: MALAPPINFO + '?' + require('querystring').stringify(opt),
+				url: MALAPPINFO + '?' + require('querystring').stringify(_.extend(opt, { status: 'all' })), // Every value different from "all" doesn't seem to do anything...
 				gzip: true
 			}, function(error, response, body) {
 				if (callback) callback(error, body);
