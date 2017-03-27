@@ -1,22 +1,24 @@
 const TAG = 'AI.APIAI';
 
-function performAction(action, result, data) {
-	let dot_pos = action.indexOf('.');
+function getActionMethod(str) {
+	let dot_pos = str.indexOf('.');
 
 	if (dot_pos) {
-		let handler_name = action.slice(0, dot_pos);
-		let method = action.slice(dot_pos + 1).toLowerCase().replace(/\.(.)/g, function(match, group1) {
+		let handler_name = str.slice(0, dot_pos);
+		let method = str.slice(dot_pos + 1).toLowerCase().replace(/\.(.)/g, function(match, group1) {
 			return group1.toUpperCase();
 		});
 
-		if (method == null || !_.isFunction(Handlers[handler_name])) return Promise.reject();
+		if (method == null || !_.isFunction(Handlers[handler_name])) return null;
 
-		return Handlers[handler_name]()[method](result, data);
-	} else if (_.isFunction(Handlers[action])) {
+		let Handler = Handlers[handler_name]();
+
+		return Handler[method].bind(Handler);
+	} else if (_.isFunction(Handlers[str])) {
 		// TODO check if action is class?
-		return Handlers[action](result, data);
+		return Handlers[str];
 	} else {
-		return Promise.reject();
+		return null;
 	}
 }
 
@@ -28,7 +30,7 @@ class APIAI {
 	}
 
 	textRequest(data, text) {
-		var self = this;
+		let self = this;
 
 		return new Promise((resolve, reject) => {
 			console.debug(TAG, 'textRequest', text);
@@ -37,12 +39,13 @@ class APIAI {
 			request.on('response', (response) => {
 				let result = response.result;
 				let fulfillment = result.fulfillment;
+				let action = getActionMethod(result.action);
 				console.debug(TAG, 'response', JSON.stringify(result, null, 2));
 
-				if (result.actionIncomplete === false) {
-					return performAction(result.action, result, data)
-					.then(resolve)
-					.catch(reject);
+				if (result.actionIncomplete === false && action != null) {
+					return action(result, data)
+						.then(resolve)
+						.catch(reject);
 				}
 
 				if (!_.isEmpty(fulfillment.speech)) {
@@ -52,7 +55,7 @@ class APIAI {
 				}
 
 				if (fulfillment.messages.length > 0) {
-					let msg = fulfillment.messages.getRandom();
+					let msg = fulfillment.messages[Math.floor(Math.random() * fulfillment.messages.length)];
 					if (msg.replies) {
 						return resolve({
 							text: fulfillment.messages[0].title,

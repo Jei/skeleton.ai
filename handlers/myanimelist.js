@@ -49,7 +49,7 @@ class MyAnimeList {
 			}
 
 			this.malappinfo(_.pick(query, MALAPPINFO_SUPPORTED_PARAMS), (err, resp) => {
-				require('xml2js').parseString(resp, function(err, result) {
+				require('xml2js').parseString(resp, { explicitArray: false }, function(err, result) {
 					let malresult = result.myanimelist;
 
 					if (malresult == null) return reject();
@@ -66,8 +66,10 @@ class MyAnimeList {
 						});
 					}
 
+					let formatted_results = formatResults(malresult[query.type || 'anime'], _.omit(query, MALAPPINFO_SUPPORTED_PARAMS));
+
 					return resolve({
-						text: formatResults(malresult[query.type || 'anime'], _.omit(query, MALAPPINFO_SUPPORTED_PARAMS))
+						text: formatted_results || i18n.__("I couldn't find any {{type}}.", query)
 					});
 				});
 			});
