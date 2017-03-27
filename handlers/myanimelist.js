@@ -8,7 +8,15 @@ const MALAPPINFO_SUPPORTED_PARAMS = ['u','type'];
 const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../../i18n/' + TAG + '.json') ? '../../i18n/' + TAG + '.json' : '../../i18n/default.json');
 
 function formatResults(list, filters) {
-	return _.map(_.where(list, filters), function(entry) {
+	return _.map(_.filter(list, function(item) {
+		return _.all(filters, function(filter, key) {
+			if (_.isArray(filter)) {
+				return filter.indexOf(item[key]) >= 0;
+			} else {
+				return item[key] == filter;
+			}
+		});
+	}), function(entry) {
 		return entry.series_title;
 	}).join('\n');
 }
