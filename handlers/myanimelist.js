@@ -11,7 +11,8 @@ function formatResults(list, filters) {
 	return _.map(_.filter(list, function(item) {
 		return _.all(filters, function(filter, key) {
 			if (_.isArray(filter)) {
-				return filter.indexOf(item[key]) >= 0;
+
+				return filter.length > 0 ? filter.indexOf(item[key]) >= 0 : true; // To account for empty array filters
 			} else {
 				return item[key] == filter;
 			}
