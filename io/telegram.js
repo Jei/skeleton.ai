@@ -1,6 +1,10 @@
 const TAG = 'IO.Telegram';
 const TelegramBot = require('node-telegram-bot-api');
 
+function splitMessage(text) {
+	return text.match(/([^\s][\w\W\n]{0,4096})(?=\n[\w\W\n]*|$)/gi); // Split a string in parts of 4096 characters at most, ending with newline.
+}
+
 class Telegram extends require('./iodriver') {
 	constructor(cfg) {
 		super();
@@ -26,24 +30,28 @@ class Telegram extends require('./iodriver') {
 
 			if (e.error) return resolve();
 
+			let self = this;
+
 			if (e.text) {
-				this.bot.sendChatAction(chatId, 'typing');
-				this.bot.sendMessage(chatId, e.text, opts);
+				self.bot.sendChatAction(chatId, 'typing');
+				_.each(splitMessage(e.text), function(part) {
+					self.bot.sendMessage(chatId, part, opts);
+				});
 				return resolve();
 			}
 
 			if (e.spotify) {
-				this.bot.sendChatAction(chatId, 'typing');
+				self.bot.sendChatAction(chatId, 'typing');
 				if (e.spotify.song) {
-					this.bot.sendMessage(chatId, e.spotify.song.external_urls.spotify, opts);
+					self.bot.sendMessage(chatId, e.spotify.song.external_urls.spotify, opts);
 					return resolve();
 				}
 				return reject();
 			}
 
 			if (e.photo) {
-				this.bot.sendChatAction(chatId, 'upload_photo');
-				this.bot.sendPhoto(chatId, e.photo, opts);
+				self.bot.sendChatAction(chatId, 'upload_photo');
+				self.bot.sendPhoto(chatId, e.photo, opts);
 				return resolve();
 			}
 
