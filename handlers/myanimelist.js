@@ -4,14 +4,41 @@ const TAG = require('path').basename(__filename, '.js');
 const MALAPPINFO = 'https://myanimelist.net/malappinfo.php';
 const MALAPPINFO_SUPPORTED_PARAMS = ['u','type'];
 
+const MALAPPINFO_ATTRS = [
+	"series_mangadb_id",
+	"series_title",
+	"series_synonyms",
+	"series_type",
+	"series_chapters",
+	"series_volumes",
+	"series_status",
+	"series_start",
+	"series_end",
+	"series_image",
+	"my_id",
+	"my_read_chapters",
+	"my_read_volumes",
+	"my_start_date",
+	"my_finish_date",
+	"my_score",
+	"my_status",
+	"my_rereadingg",
+	"my_rereading_chap",
+	"my_last_updated",
+	"my_tags",
+	"my_rewatching",
+	"my_rewatching_ep",
+	"my_watched_episodes",
+	"series_episodes"
+];
+
 // TODO create support module for localization
 const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../../i18n/' + TAG + '.json') ? '../../i18n/' + TAG + '.json' : '../../i18n/default.json');
 
 function formatResults(list, filters) {
-	return _.map(_.filter(list, function(item) {
-		return _.all(filters, function(filter, key) {
+	let filtered_results = _.map(_.filter(list, function(item) {
+		return _.all(_.pick(filters, MALAPPINFO_ATTRS), function(filter, key) {
 			if (_.isArray(filter)) {
-
 				return filter.length > 0 ? filter.indexOf(item[key]) >= 0 : true; // To account for empty array filters
 			} else {
 				return item[key] == filter;
@@ -19,7 +46,12 @@ function formatResults(list, filters) {
 		});
 	}), function(entry) {
 		return entry.series_title;
-	}).join('\n');
+	});
+
+	filtered_results = _.sortBy(filtered_results, filters.order_by || 'series_title');
+	if (filters.order_type == "desc") filtered_results.reverse();
+
+	return filtered_result.join('\n');
 }
 
 class MyAnimeList {
