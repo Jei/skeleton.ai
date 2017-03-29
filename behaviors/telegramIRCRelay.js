@@ -15,7 +15,11 @@ if (IOs.telegram && IOs.irc && _config) {
 			from = e.from.first_name + (e.from.last_name != null ? ' ' + e.from.last_name : '');
 		}
 
-		IOs.irc.output(_config.ircChannel, 'Telegram.' + from + ': ' + e.text);
+		let parts = e.text ? e.text.split('\n') : [];
+
+		parts.forEach(function(part) {
+			IOs.irc.output(_config.ircChannel, 'Telegram.' + from + ': ' + part);
+		});
 	});
 
 	IOs.irc.on('message', (from, to, message) => {
