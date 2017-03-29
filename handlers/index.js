@@ -9,7 +9,7 @@ fs.readdirSync(__dirname).forEach(function(file) {
 	.replace(/\//g, '.')
 	.replace('.js','');
 
-	if (handler_name == null || config.handlers[handler_name] == null) {
+	if (config.handlers == null || handler_name == null || config.handlers[handler_name] == null) {
 		return;
 	}
 
