@@ -36,22 +36,24 @@ const MALAPPINFO_ATTRS = [
 const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../../i18n/' + TAG + '.json') ? '../../i18n/' + TAG + '.json' : '../../i18n/default.json');
 
 function formatResults(list, filters) {
-	let filtered_results = _.map(_.filter(list, function(item) {
+	let filtered_results = _.filter(list, function(item) {
 		return _.all(_.pick(filters, MALAPPINFO_ATTRS), function(filter, key) {
+			if (_.isString(filter) && _.isEmpty(filter)) return true;
+
 			if (_.isArray(filter)) {
 				return filter.length > 0 ? filter.indexOf(item[key]) >= 0 : true; // To account for empty array filters
 			} else {
-				return item[key] == filter;
+				return _.isEmptyitem[key] == filter;
 			}
 		});
-	}), function(entry) {
-		return entry.series_title;
 	});
 
 	filtered_results = _.sortBy(filtered_results, filters.order_by || 'series_title');
 	if (filters.order_type == "desc") filtered_results.reverse();
 
-	return filtered_result.join('\n');
+	return _.map(filtered_results, function(entry) {
+		return entry.series_title;
+	}).join('\n');
 }
 
 class MyAnimeList {
