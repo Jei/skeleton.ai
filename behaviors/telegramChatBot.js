@@ -2,12 +2,15 @@ const telegram_config = config.ioDrivers.telegram || {};
 const _config = config.behaviors.telegramChatBot || {};
 
 function performCommand(text, entity) {
-	const command_text = text.substr(entity.offset+1, entity.length);
+	let command_text = text.substr(entity.offset+1, entity.length-1);
 	let match = command_text.match(/^([a-z]+)[A-Z]?/);
 
 	if (match != null && match[1] != null) {
 		let handler_name = match[1];
 		let method = command_text.substring(handler_name.length);
+		if (method.length > 0) {
+			method = method.substring(0,1).toLowerCase() + method.substring(1);
+		}
 		let params = text.substring(entity.offset + entity.length);
 		let next_cmd_pos = params.indexOf('/');
 		if (next_cmd_pos >= 0) {
@@ -23,7 +26,7 @@ function performCommand(text, entity) {
 
 			let Handler = Handlers[handler_name]();
 
-			return Handler.apply(method, Handler, params);
+			return Handler[method].apply(Handler, params);
 		} else if (_.isFunction(Handlers[command_text])) {
 			// TODO check if action is class?
 			return Handlers[command_text](params);
