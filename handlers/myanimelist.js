@@ -72,10 +72,11 @@ class MyAnimeList {
 	}
 
 	list(result, data) {
+		result = result || {};
 		return new Promise((resolve, reject) => {
 			let query = _.extend({
 				type: 'anime'
-			}, result.parameters);
+			}, result.parameters || {});
 
 			if (query.u == null) {
 				return resolve({
@@ -112,6 +113,7 @@ class MyAnimeList {
 	}
 
 	myList(result, data) {
+		result = result || { parameters: {} };
 		result.parameters.u = this._config.defaultUser;
 
 		return this.list(result, data);
