@@ -4,7 +4,8 @@
   "description": "Template for general purpose bots.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "knex migrate:latest"
   },
   "repository": {
     "type": "git",
@@ -18,10 +19,13 @@
   "homepage": "",
   "dependencies": {
     "apiai": "^4.0.1",
+    "bookshelf": "^0.10.3",
     "i18n-nodejs": "^2.0.0",
     "irc": "^0.5.2",
+    "knex": "^0.12.9",
     "node-telegram-bot-api": "^0.27.0",
     "request": "^2.81.0",
+    "sqlite3": "^3.1.8",
     "underscore": "^1.8.3",
     "xml2js": "^0.4.17"
   }

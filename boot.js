@@ -25,3 +25,5 @@ global.AIs = {};
 global.IOs = {};
 global.Behaviors = {};
 global.Handlers = {};
+global.__knex = require('knex')(require('./memory/knexfile'));
+global.Memory = require('bookshelf')(__knex);
