@@ -110,14 +110,14 @@ class Whitelist {
 				function(result) {
 					return { result: result, status: result == null && required ? "rejected" : "resolved" };
 				},
-				function(result) {
+				function(result,err) {
 					return { result: result, status: required ? "rejected" : "resolved" };
 				}
 			);
 		}
 
 		function getModel(idAttr, id, type) {
-			if (_.isEmpty(id)) return Promise.reject();
+			if (id == null) return Promise.reject();
 
 			let Model = require('../memory/models/' + type);
 			let base = {};
@@ -127,22 +127,22 @@ class Whitelist {
 		}
 
 		let promises = [
-			reflect(getModel('idChat', params.chatId, 'whitelistUser'), true), // TODO optional non strict mode
-			reflect(getModel('idGroup', params.groupId, 'whitelistGroup'), params.groupId != null),
+			reflect(getModel('chatId', params.chatId, 'whitelistUser'), true), // TODO optional non strict mode
+			reflect(getModel('groupId', params.groupId, 'whitelistGroup'), params.groupId != null),
 			reflect(getModel('command', params.command, 'whitelistCommand'), params.command != null)
 		]
 
 		return Promise.all(promises).then(function(results) {
-			if (_.any(results, function(res) { return res.status == "rejected" })) return false;
+			if (_.any(results, function(res) { return res.status == "rejected"; })) return Promise.reject();
 
 			let user = results[0].result;
 			let group = results[1].result;
 			let command = results[2].result;
 
-			if (command && command.get('level') > user.get('level')) return false;
-			if (command && group && command.get('level') > group.get('level')) return false;
+			if (command && command.get('level') > user.get('level')) return Promise.reject();
+			if (command && group && command.get('level') > group.get('level')) return Promise.reject();
 
-			return true;
+			return Promise.resolve();
 		});
 	}
 }

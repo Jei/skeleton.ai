@@ -53,24 +53,28 @@ IOs.telegram.on('message', (e) => {
 
 	if (commands.length > 0) {
 		_.each(commands, function(entity) {
-			Whitelist.validate.apply(Whitelist, {
-				chatId: e.chat.id,
-				command: e.text.substr(entity.offset+1, entity.length-1)
+			Whitelist.validate.call(Whitelist, {
+				parameters: {
+					chatId: e.chat.id,
+					command: e.text.substr(entity.offset+1, entity.length-1)
+				}
 			}).then(() => {
 				return performCommand(e.text, entity);
 			}).then((result) => {
 				IOs.telegram.output(e.chat.id, result);
 			})
-			.catch((err) => {
-				// TODO send error message?
-				console.error(err);
-			});
+				.catch((err) => {
+					// TODO send error message?
+					console.error(err);
+				});
 		});
 	} else if (e.text) {
 		let text = e.text.replace(new RegExp('(' + _config.aiAliases.join('|') + ')'), '');
 
-		Whitelist.validate.apply(Whitelist, {
-			chatId: e.chat.id
+		Whitelist.validate.call(Whitelist, {
+			parameters: {
+				chatId: e.chat.id
+			}
 		}).then(() => {
 			return AIs.apiai.textRequest({
 				sessionId: e.chat.id
@@ -78,9 +82,9 @@ IOs.telegram.on('message', (e) => {
 		}).then((result) => {
 			IOs.telegram.output(e.chat.id, result);
 		})
-		.catch((err) => {
-			// TODO send error message?
-			console.error(err);
-		});
+			.catch((err) => {
+				// TODO send error message?
+				console.error(err);
+			});
 	}
 });
