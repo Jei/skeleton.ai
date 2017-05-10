@@ -25,5 +25,5 @@ global.AIs = {};
 global.IOs = {};
 global.Behaviors = {};
 global.Handlers = {};
-global.__knex = require('knex')(require('./memory/knexfile'));
+global.__knex = require('knex')(require('./knexfile')[ process.env.NODE_ENV == "development" ? "development" : "production" ]);
 global.Memory = require('bookshelf')(__knex);

@@ -2,8 +2,7 @@
 exports.up = function(knex) {
 	return knex.schema
 	.createTable('whitelist_users', function(table) {
-		table.increments('id').primary();
-		table.string('chatId');
+		table.string('chatId').primary();
 		table.integer('level');
 	});
 };

@@ -2,8 +2,7 @@
 exports.up = function(knex) {
 	return knex.schema
 	.createTable('whitelist_commands', function(table) {
-		table.increments('id').primary();
-		table.string('command');
+		table.string('command').primary();
 		table.integer('level');
 	});
 };

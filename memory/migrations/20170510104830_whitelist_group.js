@@ -2,8 +2,7 @@
 exports.up = function(knex) {
 	return knex.schema
 	.createTable('whitelist_groups', function(table) {
-		table.increments('id').primary();
-		table.string('groupId');
+		table.string('groupId').primary();
 		table.integer('level');
 	});
 };
