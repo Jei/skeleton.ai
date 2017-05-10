@@ -1,3 +1,5 @@
+const TAG = require('path').basename(__filename, '.js');
+
 const telegram_config = config.ioDrivers.telegram || {};
 const _config = config.behaviors.telegramChatBot || {};
 
@@ -38,43 +40,47 @@ function performCommand(text, entity) {
 	}
 }
 
-if (IOs.telegram && AIs.apiai && _config) {
-	IOs.telegram.on('message', (e) => {
-		console.info('Message from Telegram', e);
+if (!IOs.telegram || !AIs.apiai || !_.isFunction(Handlers.whitelist) || !_config) throw new Error(TAG + ': missing dependencies.');
 
-		// TODO Improve whitelist/blacklist
-		if (!require('../support/configWhitelist').isAllowed(e.chat.id)) {
-			return;
-		}
+IOs.telegram.on('message', (e) => {
+	console.info('Message from Telegram', e);
 
-		// Handle commands OR text
-		// TODO handle commands AND text?
-		let commands = _.where(e.entities, {type: 'bot_command'});
+	const Whitelist = Handlers.whitelist();
 
-		if (commands.length > 0) {
-			_.each(commands, function(entity) {
-				performCommand(e.text, entity)
-				.then((result) => {
-					IOs.telegram.output(e.chat.id, result);
-				})
-				.catch((err) => {
-					// TODO send error message?
-					console.error(err);
-				});
-			});
-		} else if (e.text) {
-			let text = e.text.replace(new RegExp('(' + _config.aiAliases.join('|') + ')'), '');
+	// Handle commands OR text
+	// TODO handle commands AND text?
+	let commands = _.where(e.entities, {type: 'bot_command'});
 
-			AIs.apiai.textRequest({
-				sessionId: e.chat.id
-			}, text)
-			.then((result) => {
+	if (commands.length > 0) {
+		_.each(commands, function(entity) {
+			Whitelist.validate.apply(Whitelist, {
+				chatId: e.chat.id,
+				command: e.text.substr(entity.offset+1, entity.length-1)
+			}).then(() => {
+				return performCommand(e.text, entity);
+			}).then((result) => {
 				IOs.telegram.output(e.chat.id, result);
 			})
 			.catch((err) => {
 				// TODO send error message?
 				console.error(err);
 			});
-		}
-	});
-}
+		});
+	} else if (e.text) {
+		let text = e.text.replace(new RegExp('(' + _config.aiAliases.join('|') + ')'), '');
+
+		Whitelist.validate.apply(Whitelist, {
+			chatId: e.chat.id
+		}).then(() => {
+			return AIs.apiai.textRequest({
+				sessionId: e.chat.id
+			}, text)
+		}).then((result) => {
+			IOs.telegram.output(e.chat.id, result);
+		})
+		.catch((err) => {
+			// TODO send error message?
+			console.error(err);
+		});
+	}
+});

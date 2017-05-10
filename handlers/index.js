@@ -21,5 +21,11 @@ fs.readdirSync(__dirname).forEach(function(file) {
 
 			return new Handler(config.handlers[handler_name]);
 		};
+
+		let Handler = exports[handler_name]();
+
+		if (_.isFunction(Handler.__init)) {
+			Handler.__init.apply(Handler);
+		}
 	}
 });
