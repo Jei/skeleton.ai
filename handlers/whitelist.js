@@ -146,8 +146,48 @@ class Whitelist {
 			});
 	}
 
-	updateGroup(result, data) {
-		// TODO
+	addGroup(result, data) {
+		result = result || {};
+
+		let item = result.parameters || {};
+
+		if (_.isEmpty(item.groupId)) return Promise.reject();
+		_.defaults(item, {
+			level: 0
+		});
+
+		return addModel(item, 'whitelistGroup')
+			.then(function() {
+				return {
+					text: i18n.__('Successfully added the group "{{groupId}}" with level {{level}}.', item)
+				};
+			});
+	}
+
+	updateCommand(result, data) {
+		result = result || {};
+
+		let item = result.parameters || {};
+
+		if (_.isEmpty(item.groupId)) return Promise.reject();
+		_.defaults(item, {
+			level: 0
+		});
+
+		return updateModel({ groupId: item.groupId }, {level: item.level }, 'whitelistGroup')
+			.then(function() {
+				return {
+					text: i18n.__('Successfully updated the group "{{groupId}}" with level {{level}}.', item)
+				};
+			})
+			.catch(function(err) {
+				return addModel(item, 'whitelistGroup')
+					.then(function() {
+						return {
+							text: i18n.__('Successfully added the group "{{groupId}}"" with level {{level}}.', item)
+						};
+					});
+			});
 	}
 
 	addCommand(result, data) {
@@ -163,7 +203,7 @@ class Whitelist {
 		return addModel(item, 'whitelistCommand')
 			.then(function() {
 				return {
-					text: i18n.__('Successfully added the command "{{command}}"" with level {{level}}.', item)
+					text: i18n.__('Successfully added the command "{{command}}" with level {{level}}.', item)
 				};
 			});
 	}
