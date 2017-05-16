@@ -3,6 +3,69 @@ const TAG = require('path').basename(__filename, '.js');
 // TODO create support module for localization
 const i18n = require('i18n-nodejs')(config.language || 'en', require('fs').existsSync('../../i18n/' + TAG + '.json') ? '../../i18n/' + TAG + '.json' : '../../i18n/default.json');
 
+const CONFIG_MODELS_MAP = {
+	users: 'whitelistUser',
+	groups: 'whitelistGroup',
+	commands: 'whitelistCommand',
+}
+
+function getModel(item, type) {
+	if (_.isEmpty(type)) return Promise.reject();
+
+	let Model = require('../memory/models/' + type);
+
+	return new Model(item).fetch();
+}
+
+function addModel(obj, type) {
+	if (_.isEmpty(obj) || _.isEmpty(type)) return Promise.reject();
+
+	let Model = null;
+
+	try {
+		Model = require('../memory/models/' + type);
+	} catch(e) {
+		console.error(e);
+		return Promise.reject();
+	}
+
+	return new Model(obj).save(null, { method: 'insert' });
+}
+
+function updateModel(where, obj, type) {
+	if (_.isEmpty(obj) || _.isEmpty(type) || _.isEmpty(obj)) return Promise.reject();
+
+	let Model = null;
+
+	try {
+		Model = require('../memory/models/' + type);
+	} catch(e) {
+		console.error(e);
+		return Promise.reject();
+	}
+
+	return new Model(where).save(obj, { patch: true });
+}
+
+function listCollection(type) {
+	if (_.isEmpty(type)) return Promise.reject();
+
+	let Model = require('../memory/models/' + type);
+
+	return Model.fetchAll()
+		.then(function(collection) {
+			return { 
+				text: collection.map(function(model) {
+					return model.id + ': ' + model.get('level');
+				}).join('\n')
+			};
+		})
+		.catch(function(err) {
+			console.error(err);
+			return Promise.reject();
+		});
+}
+
 class Whitelist {
 	constructor(cfg) {
 		let self = this;
@@ -12,44 +75,49 @@ class Whitelist {
 	__init() {
 		let self = this;
 
-		_.each(self._config.users, function(user) {
-			self.updateUser({
-				parameters: user
-			});
-		});
-
-		_.each(self._config.groups, function(group) {
-			self.updateGroup({
-				parameters: group
-			});
-		});
-
-		_.each(self._config.commands, function(command) {
-			self.updateCommand({
-				parameters: command
+		_.each(CONFIG_MODELS_MAP, function(type, name) {
+			_.each(self._config[name], function(item) {
+				addModel(item, type)
+					.catch(function(err) {
+						getModel(_.omit(item, 'level'), type)
+							.then(function(model) {
+								if (model == null) {
+									console.error(TAG, err);
+								}
+							});
+					});
 			});
 		});
 	}
 
 	listUsers(result, data) {
-		let WhitelistUser = require('../memory/models/whitelistUser');
-
-		return WhitelistUser.fetchAll().then(function(collection) {
-
-			return {
-				text: collection.map(function(model) {
-					return model.get('chatId') + ': ' + model.get('level');
-				}).join('\n')
-			};
-		});
+		return listCollection('whitelistUser');
 	}
 
 	listGroups(result, data) {
-
+		return listCollection('whitelistGroup');
 	}
 
 	listCommands(result, data) {
+		return listCollection('whitelistCommand');
+	}
 
+	addUser(result, data) {
+		result = result || {};
+
+		let item = result.parameters || {};
+
+		if (_.isEmpty(item.chatId)) return Promise.reject();
+		_.defaults(item, {
+			level: 0
+		});
+
+		return addModel(item, 'whitelistUser')
+			.then(function() {
+				return {
+					text: i18n.__("Successfully added the user with id {{chatId}} and level {{level}}.", item)
+				};
+			});
 	}
 
 	updateUser(result, data) {
@@ -62,18 +130,42 @@ class Whitelist {
 			level: 0
 		});
 
-		let WhitelistUser = require('../memory/models/whitelistUser');
-
-		return new WhitelistUser(_.pick(item, 'chatId', 'level')).save()
+		return updateModel({ chatId: item.chatId }, { level: item.level }, 'whitelistUser')
 			.then(function() {
 				return {
-					text: i18n.__("Successfully added the user with id {{chatId}} and level {{level}}.", item)
+					text: i18n.__('Successfully updated the user with id {{chatId}} and level {{level}}.', item)
 				};
+			})
+			.catch(function() {
+				return addModel(item, 'whitelistUser')
+					.then(function() {
+						return {
+							text: i18n.__("Successfully added the user with id {{chatId}} and level {{level}}.", item)
+						};
+					});
 			});
 	}
 
 	updateGroup(result, data) {
 		// TODO
+	}
+
+	addCommand(result, data) {
+		result = result || {};
+
+		let item = result.parameters || {};
+
+		if (_.isEmpty(item.command)) return Promise.reject();
+		_.defaults(item, {
+			level: 0
+		});
+
+		return addModel(item, 'whitelistCommand')
+			.then(function() {
+				return {
+					text: i18n.__('Successfully added the command "{{command}}"" with level {{level}}.', item)
+				};
+			});
 	}
 
 	updateCommand(result, data) {
@@ -86,13 +178,19 @@ class Whitelist {
 			level: 0
 		});
 
-		let WhitelistCommand = require('../memory/models/whitelistCommand');
-
-		return new WhitelistCommand(_.pick(item, 'command', 'level')).save()
+		return updateModel({ command: item.command }, {level: item.level }, 'whitelistCommand')
 			.then(function() {
 				return {
-					text: i18n.__('Successfully added the command "{{command}}"" with level {{level}}.', item)
+					text: i18n.__('Successfully updated the command "{{command}}"" with level {{level}}.', item)
 				};
+			})
+			.catch(function(err) {
+				return addModel(item, 'whitelistCommand')
+					.then(function() {
+						return {
+							text: i18n.__('Successfully added the command "{{command}}"" with level {{level}}.', item)
+						};
+					});
 			});
 	}
 
